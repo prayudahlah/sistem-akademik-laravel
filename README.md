@@ -1,58 +1,125 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Sistem Akademik
 
-## About Laravel
+Aplikasi CRUD data akademik berbasis Laravel untuk mengelola data mahasiswa, dosen, mata kuliah, dan perkuliahan.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Fitur
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Mahasiswa** — Kelola data mahasiswa (NIM, nama, alamat)
+- **Dosen** — Kelola data dosen (NIP, nama, alamat)
+- **Mata Kuliah** — Kelola data mata kuliah (kode, nama, SKS, semester)
+- **Perkuliahan** — Catat perkuliahan dengan relasi mahasiswa, dosen, dan mata kuliah beserta nilai
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Tech Stack
 
-## Learning Laravel
+- **Framework:** Laravel 13
+- **PHP:** ^8.3
+- **Database:** PostgreSQL
+- **Frontend:** Blade + Tailwind CSS
+- **Build Tool:** Vite
+- **Dev Environment:** Laravel Sail (Docker)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Prasyarat
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- [Docker](https://docs.docker.com/get-started/get-docker/)
+- [Composer](https://getcomposer.org/)
+- PHP 8.3+
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Setup
 
-## Agentic Development
+1. Clone repositori dan masuk ke direktori proyek:
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+   ```bash
+   cd distribusi-1
+   ```
 
-```bash
-composer require laravel/boost --dev
+2. Install dependensi PHP:
 
-php artisan boost:install
+   ```bash
+   composer install
+   ```
+
+3. Salin file lingkungan:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+4. Sesuaikan konfigurasi database di `.env`:
+
+   ```env
+   DB_CONNECTION=pgsql
+   DB_HOST=nixia
+   DB_PORT=5435
+   DB_DATABASE=kompter_indvidu
+   DB_USERNAME=postgres
+   DB_PASSWORD=postgres
+   ```
+
+5. Jalankan Sail:
+
+   ```bash
+   ./vendor/bin/sail up -d
+   ```
+
+6. Generate application key:
+
+   ```bash
+   ./vendor/bin/sail artisan key:generate
+   ```
+
+7. Jalankan migrasi (jika tabel belum ada):
+
+   ```bash
+   ./vendor/bin/sail artisan migrate
+   ```
+
+Akses aplikasi di [http://localhost](http://localhost).
+
+## Infrastruktur
+
+Aplikasi berjalan di dalam container Docker Laravel Sail. Container terhubung ke **Docker network eksternal** `sistem-akademik` yang memungkinkan komunikasi dengan database PostgreSQL di host `nixia:5435` (atau container database terpisah dalam network yang sama).
+
+Lihat `compose.yaml` untuk detail konfigurasi.
+
+## Endpoint
+
+| Method | URI                   | Controller              | Keterangan              |
+|--------|-----------------------|-------------------------|-------------------------|
+| GET    | `/`                   | —                       | Redirect ke mahasiswa   |
+| GET    | `/mahasiswa`          | `MahasiswaController`   | Daftar mahasiswa        |
+| POST   | `/mahasiswa`          | `MahasiswaController`   | Tambah mahasiswa        |
+| GET    | `/mahasiswa/{nim}`    | `MahasiswaController`   | Detail mahasiswa        |
+| PUT    | `/mahasiswa/{nim}`    | `MahasiswaController`   | Update mahasiswa        |
+| DELETE | `/mahasiswa/{nim}`    | `MahasiswaController`   | Hapus mahasiswa         |
+| GET    | `/dosen`              | `DosenController`       | Daftar dosen            |
+| POST   | `/dosen`              | `DosenController`       | Tambah dosen            |
+| GET    | `/dosen/{nip}`        | `DosenController`       | Detail dosen            |
+| PUT    | `/dosen/{nip}`        | `DosenController`       | Update dosen            |
+| DELETE | `/dosen/{nip}`        | `DosenController`       | Hapus dosen             |
+| GET    | `/mata-kuliah`        | `MataKuliahController`  | Daftar mata kuliah      |
+| POST   | `/mata-kuliah`        | `MataKuliahController`  | Tambah mata kuliah      |
+| GET    | `/mata-kuliah/{kode}` | `MataKuliahController`  | Detail mata kuliah      |
+| PUT    | `/mata-kuliah/{kode}` | `MataKuliahController`  | Update mata kuliah      |
+| DELETE | `/mata-kuliah/{kode}` | `MataKuliahController`  | Hapus mata kuliah       |
+| GET    | `/perkuliahan`        | `PerkuliahanController` | Daftar perkuliahan      |
+| POST   | `/perkuliahan`        | `PerkuliahanController` | Tambah perkuliahan      |
+| GET    | `/perkuliahan/{id}`   | `PerkuliahanController` | Detail perkuliahan      |
+| PUT    | `/perkuliahan/{id}`   | `PerkuliahanController` | Update perkuliahan      |
+| DELETE | `/perkuliahan/{id}`   | `PerkuliahanController` | Hapus perkuliahan       |
+
+## Struktur Database
+
+```
+mahasiswa (nim, nama, alamat)
+    └── 1:N ── perkuliahan (nim, nip, kode, nilai)
+dosen (nip, nama, alamat)  ── N:1 ──┘
+mata_kuliah (kode, matkul, sks, smt) ── N:1 ──┘
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Catatan
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **Tabel dibuat secara manual** di database — tidak ada migration Laravel untuk tabel `mahasiswa`, `dosen`, `mata_kuliah`, dan `perkuliahan`.
+- **Tidak ada autentikasi** — aplikasi dapat diakses tanpa login.
+- **Route key binding** menggunakan kolom natural: `nim`, `nip`, `kode` sebagai pengganti `id`.
